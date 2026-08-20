@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class OrderItem extends Model {
+class OrderItem extends Model
+{
     use HasFactory;
 
     protected $fillable = [
@@ -17,12 +18,14 @@ class OrderItem extends Model {
         'subtotal_cents',
     ];
 
-    // a row belong to an order and a product   
-    public function order(): BelongsTo {
+    // a row belong to an order and a product
+    public function order(): BelongsTo
+    {
         return $this->belongsTo(Order::class);
     }
 
-    public function product(): BelongsTo {
+    public function product(): BelongsTo
+    {
         return $this->belongsTo(Product::class);
     }
 }
