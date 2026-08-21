@@ -13,16 +13,26 @@ class CartService
      */
     public function getItems(): array
     {
-        // associative array
+        // Annotazione esplicita: diciamo a PHPStan che $cart è un array
+        // con chiavi intere (product_id) e valori interi (quantity),
+        // così sa esattamente cosa aspettarsi dal ciclo sottostante
+        /** @var array<int, int> $cart */
         $cart = session(self::SESSION_KEY, []);
         $items = [];
 
-        // scan each item in the cart and retrieve the product from the database
         foreach ($cart as $productId => $quantity) {
-            $product = Product::find($productId);
+            // Cast esplicito a int: rimuove ogni ambiguità sul tipo passato
+            // a find(), garantendo che il risultato sia sempre un singolo
+            // Product (o null), mai una Collection
+            $product = Product::find((int) $productId);
 
-            if ($product) {
-                $items[] = ['product' => $product, 'quantity' => $quantity];
+            // instanceof invece del semplice if($product) è più esplicito
+            // per PHPStan: conferma che si tratta proprio di un Product
+            if ($product instanceof Product) {
+                $items[] = [
+                    'product' => $product,
+                    'quantity' => (int) $quantity,
+                ];
             }
         }
 
